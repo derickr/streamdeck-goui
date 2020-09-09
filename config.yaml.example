@@ -1,0 +1,99 @@
+button_count: 15
+
+pages:
+  - Name: "OBSPage"
+    Image: "obs-logo.png"
+  - Name: "Xdebug"
+    Image: "xdebug.png"
+  - Name: "Home"
+    Image: "house.png"
+    Last: true
+
+Home:
+  - Index: 0
+    Type: pages
+  - Index: 10
+    Type: brightness
+    Arguments:
+      - LevelLow: 10
+      - ImageLow: "bright-000.png"
+      - LevelNormal: 50
+      - ImageNormal: "bright-050.png"
+      - LevelHigh: 90
+      - ImageHigh: "bright-100.png"
+  - Index: 13
+    Type: command
+    Image: "lock.png"
+    Arguments:
+      - Command: "/home/derick/bin/obs/lock.sh"
+
+obs:
+  host: "localhost"
+
+OBSPage:
+  - Index: 0
+    Type: obs_scenes
+    Arguments:
+      - SceneCount: 6
+  - Index: 10
+    Type: obs_record
+    Image: "record.png"
+  - Index: 11
+    Type: obs_stream
+    Image: "twitch-logo.png"
+  - Index: 13
+    Type: obs_toggle_mute
+    ImageOn: "sound.png"
+    ImageOff: "muted.png"
+    Arguments:
+      - Source: "Mic/Aux"
+  - Index: 14
+    Image: "house.png"
+    Type: home
+
+Xdebug:
+  - Index: 0
+    Type: command
+    Image: "mantis.png"
+    Arguments:
+     - Command: "/home/derick/bin/obs/browser-bugs.sh"
+  - Index: 1
+    Type: command
+    Image: "pr.png"
+    Arguments:
+      - Command: "/home/derick/bin/obs/browser-prs.sh"
+  - Index: 2
+    Type: command
+    Image: "stack.png"
+    Arguments:
+      - Command: "/home/derick/bin/obs/browser-stackoverflow.sh"
+
+# hardcoded image names, in a flexible location
+images_buttons: "images/buttons"
+
+# OBS scenes
+obs_scenes:
+  "Test Screen":
+    name: "Test Screen"
+    image: "test.png"
+  "Starting Soon":
+    name: "Starting Soon"
+    image: "wait.png"
+  Title:
+    name: "Title"
+  "Fullscreen Face":
+    name: "Face"
+    image: "face.png"
+  Presentation:
+    name: Presentation
+    image: "presentation.png"
+  "Presentation with Face":
+    name: "Presentation with Face"
+    image: "presentation-face.png"
+
+# Twitch Integration
+twitch:
+  client_id: abcdef01
+  client_secret: zzzzxxxxwwwwyyyy
+  user_id: "9876543210"
+
