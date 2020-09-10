@@ -20,6 +20,7 @@ import (
 var sd *streamdeck.StreamDeck
 var obs_addon *addons.Obs
 var brightness_addon *addons.Brightness
+var clock_addon *addons.Clock
 
 func loadConfigAndDefaults() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "15:04"})
@@ -83,6 +84,7 @@ func (action *PageAction) Pressed(btn streamdeck.Button) {
 	}
 	/* Reset OBS buttons */
 	obs_addon.ClearButtons()
+	clock_addon.Reset()
 
 	for _, button := range page_definition {
 		if button.Type == "pages" {
@@ -125,8 +127,14 @@ func (action *PageAction) Pressed(btn streamdeck.Button) {
 			cmdButton.SetActionHandler(&CommandAction{Command: button.Arguments["Command"]})
 			sd.AddButton(button.Index, cmdButton)
 		}
+
+		if button.Type == "clock" {
+			clock_addon.SetClockButton(button.Index)
+		}
 	}
 }
+
+
 
 func setupPages(sd *streamdeck.StreamDeck) {
 	var sd_pages []SdPage
@@ -170,6 +178,9 @@ func main() {
 
 	brightness_addon = &addons.Brightness{SD: sd}
 	brightness_addon.Init()
+
+	clock_addon = &addons.Clock{SD: sd}
+	clock_addon.Init()
 /*
 	// init Screenshot
 	screenshot_addon := addons.Screenshot{SD: sd}

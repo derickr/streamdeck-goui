@@ -21,6 +21,8 @@ Home:
       - ImageNormal: "bright-050.png"
       - LevelHigh: 90
       - ImageHigh: "bright-100.png"
+  - Index: 12
+    Type: clock
   - Index: 13
     Type: command
     Image: "lock.png"
