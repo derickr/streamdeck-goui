@@ -1,6 +1,7 @@
 package addons
 
 import (
+	"image/color"
     "fmt"
     //"strconv"
 	"time"
@@ -8,22 +9,39 @@ import (
 	//"github.com/derickr/streamdeck-goui/actionhandlers"
 	"github.com/magicmonkey/go-streamdeck"
 	"github.com/magicmonkey/go-streamdeck/buttons"
-	// sddecorators "github.com/magicmonkey/go-streamdeck/decorators"
+	//sddecorators "github.com/magicmonkey/go-streamdeck/decorators"
 	//"github.com/rs/zerolog/log"
 )
 
+type TimerAction struct {
+    StartTime  time.Time
+	Clock     *Clock
+}
+
+func (t *TimerAction) Pressed(btn streamdeck.Button) {
+	if t.Clock.TimerActive {
+		t.Clock.TimerActive = false
+		return;
+	}
+
+	t.Clock.StartTime = t.StartTime
+	t.Clock.TimerActive = true
+}
+
 type Clock struct {
 	SD         *streamdeck.StreamDeck
-	buttonIndex int
+	ButtonIndex int
 	done        chan bool
 	ticker     *time.Ticker
+	TimerActive bool
+	StartTime   time.Time
 }
 
 func (c *Clock) Init() {
 	c.done = make(chan bool)
-	c.buttonIndex = -1
+	c.ButtonIndex = -1
 
-	c.ticker = time.NewTicker(1 * time.Second)
+	c.ticker = time.NewTicker(100 * time.Millisecond)
 
 	go func() {
 		for {
@@ -31,9 +49,18 @@ func (c *Clock) Init() {
 			case <-c.done:
 				return
 			case t := <-c.ticker.C:
-				if c.buttonIndex >= 0 {
-					button := buttons.NewTextButton(fmt.Sprintf("%02d:%02d:%02d", t.Hour(), t.Minute(), t.Second()))
-					c.SD.AddButton(c.buttonIndex, button)
+				if c.ButtonIndex >= 0 {
+					var button *buttons.TextButton
+
+					if (c.TimerActive) {
+						st := t.Sub(c.StartTime)
+						out := time.Time{}.Add(st)
+						button = buttons.NewTextButtonWithColours(fmt.Sprintf("%s", out.Format("04:05")), color.White, color.RGBA{255, 0, 0, 255})
+					} else {
+						button = buttons.NewTextButton(fmt.Sprintf("%02d:%02d:%02d", t.Hour(), t.Minute(), t.Second()))
+					}
+					button.SetActionHandler(&TimerAction{StartTime: t, Clock: c})
+					c.SD.AddButton(c.ButtonIndex, button)
 				}
 			}
 		}
@@ -41,9 +68,9 @@ func (c *Clock) Init() {
 }
 
 func (c *Clock) SetClockButton(offset int) {
-    c.buttonIndex = offset
+    c.ButtonIndex = offset
 }
 
 func (c *Clock) Reset() {
-    c.buttonIndex = -1
+    c.ButtonIndex = -1
 }

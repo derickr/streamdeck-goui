@@ -171,8 +171,8 @@ func (o *Obs) ObsEventHandlers() {
         // decorate the new
         log.Info().Msg("New scene: " + scene)
         if eventb, ok := buttons_obs[scene]; ok {
-            decorator2 := sddecorators.NewBorder(4, color.RGBA{255, 255, 0, 255})
             log.Info().Int("button", eventb.ButtonId).Msg("Highlight new scene button")
+            decorator2 := sddecorators.NewBorder(4, color.RGBA{255, 255, 0, 255})
             o.SD.SetDecorator(eventb.ButtonId, decorator2)
         }
         obs_current_scene = scene
