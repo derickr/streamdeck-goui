@@ -72,6 +72,7 @@ type PageDefinition struct {
 
 func (action *PageAction) Pressed(btn streamdeck.Button) {
 	log.Debug().Msg(action.Page)
+	clock_addon.Reset()
 
 	var page_definition []PageDefinition
 	viper.UnmarshalKey(action.Page, &page_definition)
@@ -84,7 +85,6 @@ func (action *PageAction) Pressed(btn streamdeck.Button) {
 	}
 	/* Reset OBS buttons */
 	obs_addon.ClearButtons()
-	clock_addon.Reset()
 
 	for _, button := range page_definition {
 		if button.Type == "pages" {
