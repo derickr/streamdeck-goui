@@ -54,8 +54,13 @@ func (c *Clock) Init() {
 
 					if (c.TimerActive) {
 						st := t.Sub(c.StartTime)
+
 						out := time.Time{}.Add(st)
-						button = buttons.NewTextButtonWithColours(fmt.Sprintf("%s", out.Format("04:05")), color.White, color.RGBA{255, 0, 0, 255})
+						if st > 1 * time.Hour {
+							button = buttons.NewTextButtonWithColours(fmt.Sprintf("%s", out.Format("15h04m")), color.White, color.RGBA{255, 0, 10, 255})
+						} else {
+							button = buttons.NewTextButtonWithColours(fmt.Sprintf("%s", out.Format("4m05s")), color.White, color.RGBA{uint8(out.Minute() + 195), 0, 0, 255})
+						}
 					} else {
 						button = buttons.NewTextButton(fmt.Sprintf("%02d:%02d:%02d", t.Hour(), t.Minute(), t.Second()))
 					}
