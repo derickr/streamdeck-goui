@@ -9,6 +9,7 @@ import (
 type OBSStreamAction struct {
 	Client obsws.Client
 	btn    streamdeck.Button
+	Source string
 }
 
 func (action *OBSStreamAction) Pressed(btn streamdeck.Button) {
@@ -16,6 +17,16 @@ func (action *OBSStreamAction) Pressed(btn streamdeck.Button) {
 	log.Info().Msg("Stream!")
 	req := obsws.NewStartStopStreamingRequest()
 	_, err := req.SendReceive(action.Client)
+	if err != nil {
+		log.Warn().Err(err).Msg("OBS stream action error")
+	}
+
+	if action.Source == "" {
+		return
+	}
+
+	req2 := obsws.NewSetMuteRequest(action.Source, false)
+	_, err = req2.SendReceive(action.Client)
 	if err != nil {
 		log.Warn().Err(err).Msg("OBS stream action error")
 	}

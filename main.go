@@ -98,12 +98,14 @@ func (action *PageAction) Pressed(btn streamdeck.Button) {
 
 		if button.Type == "obs_record" {
 			imageFile := viper.GetString("buttons.images") + "/" + button.Image
-			obs_addon.SetRecordButton(button.Index, imageFile)
+			unmuteSource := button.Arguments["UnmuteSource"];
+			obs_addon.SetRecordButton(button.Index, imageFile, unmuteSource)
 		}
 
 		if button.Type == "obs_stream" {
 			imageFile := viper.GetString("buttons.images") + "/" + button.Image
-			obs_addon.SetStreamButton(button.Index, imageFile)
+			unmuteSource := button.Arguments["UnmuteSource"];
+			obs_addon.SetStreamButton(button.Index, imageFile, unmuteSource)
 		}
 
 		if button.Type == "obs_toggle_mute" {

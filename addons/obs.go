@@ -44,7 +44,7 @@ func (o *Obs) ClearButtons() {
     o.toggleMuteIndex   = -1
 }
 
-func (o *Obs) SetRecordButton(index int, image string) {
+func (o *Obs) SetRecordButton(index int, image string, unmuteSource string) {
     if o.obs_client.Connected() == false {
         o.ConnectOBS()
         o.ObsEventHandlers()
@@ -54,7 +54,7 @@ func (o *Obs) SetRecordButton(index int, image string) {
         return;
     }
 
-    oaction := &actionhandlers.OBSRecordAction{Client: o.obs_client}
+    oaction := &actionhandlers.OBSRecordAction{Client: o.obs_client, Source: unmuteSource}
 
     recordButton, err := buttons.NewImageFileButton(image)
     if err == nil {
@@ -69,7 +69,7 @@ func (o *Obs) SetRecordButton(index int, image string) {
     o.recordButtonIndex = index
 }
 
-func (o *Obs) SetStreamButton(index int, image string) {
+func (o *Obs) SetStreamButton(index int, image string, unmuteSource string) {
     if o.obs_client.Connected() == false {
         o.ConnectOBS()
         o.ObsEventHandlers()
@@ -79,7 +79,7 @@ func (o *Obs) SetStreamButton(index int, image string) {
         return;
     }
 
-    oaction := &actionhandlers.OBSStreamAction{Client: o.obs_client}
+    oaction := &actionhandlers.OBSStreamAction{Client: o.obs_client, Source: unmuteSource}
 
     streamButton, err := buttons.NewImageFileButton(image)
     if err == nil {
