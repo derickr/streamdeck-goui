@@ -41,7 +41,7 @@ func (c *Clock) Init() {
 	c.done = make(chan bool)
 	c.ButtonIndex = -1
 
-	c.ticker = time.NewTicker(100 * time.Millisecond)
+	c.ticker = time.NewTicker(1000 * time.Millisecond)
 
 	go func() {
 		for {

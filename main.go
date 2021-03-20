@@ -54,6 +54,7 @@ func (c *CommandAction) Pressed(btn streamdeck.Button) {
 type SdPage struct {
 	Name     string `mapstructure:"name"`
 	Image    string `mapstructure:"image"`
+	Index    int    `mapstructure:"index"`
 	Last     bool   `mapstructure:"last"`
 }
 
@@ -148,6 +149,9 @@ func setupPages(sd *streamdeck.StreamDeck) {
 		index := i
 		if page.Last {
 			index = viper.GetInt("button_count") - 1
+		}
+		if page.Index != 0 {
+			index = page.Index
 		}
 		button, err := buttons.NewImageFileButton(viper.GetString("buttons.images") + "/" + page.Image)
 		if err == nil {
