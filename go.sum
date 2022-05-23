@@ -34,6 +34,14 @@ github.com/coreos/go-systemd v0.0.0-20190321100706-95778dfbb74e/go.mod h1:F5haX7
 github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f/go.mod h1:E3G3o1h8I7cfcXa63jLwjI0eiQQMgzzUDFVpN/nH/eA=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/derickr/go-litra-driver v0.0.0-20220523141256-25e2888bf033 h1:xnduKg9PPW6X4ZpJnwLfox8/tQVtiEPc8DhRg4oMieU=
+github.com/derickr/go-litra-driver v0.0.0-20220523141256-25e2888bf033/go.mod h1:vqmq4na1MISrnaW9IIywOu4sAEbHUWcfYYmz8SNtpes=
+github.com/derickr/go-litra-driver v0.0.0-20220523150209-6d495e6b7c31 h1:rA9wCxVoh4WERmzGc0IAcaz/2OtvNUB+A97A8X/oSnM=
+github.com/derickr/go-litra-driver v0.0.0-20220523150209-6d495e6b7c31/go.mod h1:vqmq4na1MISrnaW9IIywOu4sAEbHUWcfYYmz8SNtpes=
+github.com/derickr/go-litra-driver v0.0.0-20220523150417-dd16e3f770bd h1:oDzFKc0E5eD17CX7adYcJgiURBcVCKqI3ZJTakS9Jq0=
+github.com/derickr/go-litra-driver v0.0.0-20220523150417-dd16e3f770bd/go.mod h1:vqmq4na1MISrnaW9IIywOu4sAEbHUWcfYYmz8SNtpes=
+github.com/derickr/go-litra-driver v0.0.0-20220523150609-fcd7457fd7ea h1:VCUAs2mS9M2NLvKpCdzZUFVlg6i2CK5LiL/my4vo0sE=
+github.com/derickr/go-litra-driver v0.0.0-20220523150609-fcd7457fd7ea/go.mod h1:vqmq4na1MISrnaW9IIywOu4sAEbHUWcfYYmz8SNtpes=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=
 github.com/dgryski/go-sip13 v0.0.0-20181026042036-e10d5fee7954/go.mod h1:vAd38F8PWV+bWy6jNmig1y/TA+kYO4g3RSRF0IAv0no=
 github.com/disintegration/gift v1.2.1 h1:Y005a1X4Z7Uc+0gLpSAsKhWi4qLtsdEcMIbbdvdZ6pc=
@@ -112,6 +120,8 @@ github.com/jtolds/gls v4.20.0+incompatible/go.mod h1:QJZ7F/aHp+rZTRtaJ1ow/lLfFfV
 github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7VTCxuUUipMqKk8s4w=
 github.com/karalabe/hid v1.0.1-0.20190806082151-9c14560f9ee8 h1:AP5krei6PpUCFOp20TSmxUS4YLoLvASBcArJqM/V+DY=
 github.com/karalabe/hid v1.0.1-0.20190806082151-9c14560f9ee8/go.mod h1:Vr51f8rUOLYrfrWDFlV12GGQgM5AT8sVh+2fY4MPeu8=
+github.com/karalabe/usb v0.0.2 h1:M6QQBNxF+CQ8OFvxrT90BA0qBOXymndZnk5q235mFc4=
+github.com/karalabe/usb v0.0.2/go.mod h1:Od972xHfMJowv7NGVDiWVxk2zxnWgjLlJzE+F4F7AGU=
 github.com/kisielk/errcheck v1.1.0/go.mod h1:EZBBE59ingxPouuu3KfxchcWSUPOHkagtvWXihfKN4Q=
 github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=

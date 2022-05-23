@@ -6,6 +6,7 @@ replace github.com/magicmonkey/go-streamdeck => /home/derick/dev/go/src/github.c
 
 require (
 	github.com/christopher-dG/go-obs-websocket v0.0.0-20200501221211-5c9c018f6fb4
+	github.com/derickr/go-litra-driver v0.0.0-20220523150609-fcd7457fd7ea // indirect
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/fsnotify/fsnotify v1.4.7
 	github.com/go-home-iot/belkin v0.0.0-20161209001652-7b62ec854e95

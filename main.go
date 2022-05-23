@@ -20,6 +20,7 @@ import (
 var sd *streamdeck.StreamDeck
 var obs_addon *addons.Obs
 var brightness_addon *addons.Brightness
+var litra_addon *addons.Litra
 var clock_addon *addons.Clock
 
 func loadConfigAndDefaults() {
@@ -119,6 +120,10 @@ func (action *PageAction) Pressed(btn streamdeck.Button) {
 			brightness_addon.Buttons(button.Index, button.Arguments)
 		}
 
+		if button.Type == "litra" {
+			litra_addon.Buttons(button.Index, button.Arguments)
+		}
+
 		if button.Type == "home" {
 			homeButton, _ := buttons.NewImageFileButton(viper.GetString("buttons.images") + "/" + button.Image)
 			homeButton.SetActionHandler(&PageAction{Page: "Home"})
@@ -184,6 +189,9 @@ func main() {
 
 	brightness_addon = &addons.Brightness{SD: sd}
 	brightness_addon.Init()
+
+	litra_addon = &addons.Litra{SD: sd}
+	litra_addon.Init()
 
 	clock_addon = &addons.Clock{SD: sd}
 	clock_addon.Init()
