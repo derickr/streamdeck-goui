@@ -1,9 +1,9 @@
 package addons
 
 import (
+	"fmt"
 	"image/color"
-    "fmt"
-    //"strconv"
+	//"strconv"
 	"time"
 
 	//"github.com/derickr/streamdeck-goui/actionhandlers"
@@ -14,14 +14,14 @@ import (
 )
 
 type TimerAction struct {
-    StartTime  time.Time
+	StartTime time.Time
 	Clock     *Clock
 }
 
 func (t *TimerAction) Pressed(btn streamdeck.Button) {
 	if t.Clock.TimerActive {
 		t.Clock.TimerActive = false
-		return;
+		return
 	}
 
 	t.Clock.StartTime = t.StartTime
@@ -29,10 +29,10 @@ func (t *TimerAction) Pressed(btn streamdeck.Button) {
 }
 
 type Clock struct {
-	SD         *streamdeck.StreamDeck
+	SD          *streamdeck.StreamDeck
 	ButtonIndex int
 	done        chan bool
-	ticker     *time.Ticker
+	ticker      *time.Ticker
 	TimerActive bool
 	StartTime   time.Time
 }
@@ -52,11 +52,11 @@ func (c *Clock) Init() {
 				if c.ButtonIndex >= 0 {
 					var button *buttons.TextButton
 
-					if (c.TimerActive) {
+					if c.TimerActive {
 						st := t.Sub(c.StartTime)
 
 						out := time.Time{}.Add(st)
-						if st > 1 * time.Hour {
+						if st > 1*time.Hour {
 							button = buttons.NewTextButtonWithColours(fmt.Sprintf("%s", out.Format("15h04m")), color.White, color.RGBA{255, 0, 10, 255})
 						} else {
 							button = buttons.NewTextButtonWithColours(fmt.Sprintf("%s", out.Format("4m05s")), color.White, color.RGBA{uint8(out.Minute() + 195), 0, 0, 255})
@@ -73,9 +73,9 @@ func (c *Clock) Init() {
 }
 
 func (c *Clock) SetClockButton(offset int) {
-    c.ButtonIndex = offset
+	c.ButtonIndex = offset
 }
 
 func (c *Clock) Reset() {
-    c.ButtonIndex = -1
+	c.ButtonIndex = -1
 }

@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/hypebeast/go-osc/osc"
 	"github.com/derickr/streamdeck-goui/actionhandlers"
+	"github.com/hypebeast/go-osc/osc"
 	"github.com/magicmonkey/go-streamdeck"
 	buttons "github.com/magicmonkey/go-streamdeck/buttons"
 	sddecorators "github.com/magicmonkey/go-streamdeck/decorators"

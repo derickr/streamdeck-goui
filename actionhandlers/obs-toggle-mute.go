@@ -9,7 +9,7 @@ import (
 type OBSToggleMuteAction struct {
 	Client obsws.Client
 	btn    streamdeck.Button
-    Source string
+	Source string
 }
 
 func (action *OBSToggleMuteAction) Pressed(btn streamdeck.Button) {

@@ -46,17 +46,17 @@ type CommandAction struct {
 
 func (c *CommandAction) Pressed(btn streamdeck.Button) {
 	cmd := exec.Command(c.Command)
-	log.Info().Msgf("Running: %s", c.Command);
+	log.Info().Msgf("Running: %s", c.Command)
 	if err := cmd.Run(); err != nil {
 		log.Warn().Err(err)
 	}
 }
 
 type SdPage struct {
-	Name     string `mapstructure:"name"`
-	Image    string `mapstructure:"image"`
-	Index    int    `mapstructure:"index"`
-	Last     bool   `mapstructure:"last"`
+	Name  string `mapstructure:"name"`
+	Image string `mapstructure:"image"`
+	Index int    `mapstructure:"index"`
+	Last  bool   `mapstructure:"last"`
 }
 
 type PageAction struct {
@@ -64,12 +64,12 @@ type PageAction struct {
 }
 
 type PageDefinition struct {
-	Index int
-	Type  string
-	Arguments map[string] string
-	Image string
-	ImageOn string
-	ImageOff string
+	Index     int
+	Type      string
+	Arguments map[string]string
+	Image     string
+	ImageOn   string
+	ImageOff  string
 }
 
 func (action *PageAction) Pressed(btn streamdeck.Button) {
@@ -80,7 +80,7 @@ func (action *PageAction) Pressed(btn streamdeck.Button) {
 	viper.UnmarshalKey(action.Page, &page_definition)
 
 	// Clear all buttons
-	for i := 0; i < viper.GetInt("button_count") - 1; i++ {
+	for i := 0; i < viper.GetInt("button_count")-1; i++ {
 		sd.UnsetDecorator(i)
 		textButton := buttons.NewTextButton("")
 		sd.AddButton(i, textButton)
@@ -100,13 +100,13 @@ func (action *PageAction) Pressed(btn streamdeck.Button) {
 
 		if button.Type == "obs_record" {
 			imageFile := viper.GetString("buttons.images") + "/" + button.Image
-			unmuteSource := button.Arguments["UnmuteSource"];
+			unmuteSource := button.Arguments["UnmuteSource"]
 			obs_addon.SetRecordButton(button.Index, imageFile, unmuteSource)
 		}
 
 		if button.Type == "obs_stream" {
 			imageFile := viper.GetString("buttons.images") + "/" + button.Image
-			unmuteSource := button.Arguments["UnmuteSource"];
+			unmuteSource := button.Arguments["UnmuteSource"]
 			obs_addon.SetStreamButton(button.Index, imageFile, unmuteSource)
 		}
 
@@ -142,13 +142,11 @@ func (action *PageAction) Pressed(btn streamdeck.Button) {
 	}
 }
 
-
-
 func setupPages(sd *streamdeck.StreamDeck) {
 	var sd_pages []SdPage
-	viper.UnmarshalKey("pages", &sd_pages);
+	viper.UnmarshalKey("pages", &sd_pages)
 
-	i := 0;
+	i := 0
 
 	for _, page := range sd_pages {
 		index := i
@@ -195,23 +193,23 @@ func main() {
 
 	clock_addon = &addons.Clock{SD: sd}
 	clock_addon.Init()
-/*
-	// init Screenshot
-	screenshot_addon := addons.Screenshot{SD: sd}
-	screenshot_addon.Init()
-	screenshot_addon.Buttons()
+	/*
+		// init Screenshot
+		screenshot_addon := addons.Screenshot{SD: sd}
+		screenshot_addon.Init()
+		screenshot_addon.Buttons()
 
-	// init WindowManager
-	windowmgmt_addon := addons.WindowMgmt{SD: sd}
-	windowmgmt_addon.Init()
-	windowmgmt_addon.Buttons()
+		// init WindowManager
+		windowmgmt_addon := addons.WindowMgmt{SD: sd}
+		windowmgmt_addon.Init()
+		windowmgmt_addon.Buttons()
 
-	// set up soundcaster
-	caster_addon := addons.Caster{SD: sd}
-	caster_addon.Init()
-	caster_addon.Buttons()
-*/
-	action := &PageAction{Page: "Home"};
+		// set up soundcaster
+		caster_addon := addons.Caster{SD: sd}
+		caster_addon.Init()
+		caster_addon.Buttons()
+	*/
+	action := &PageAction{Page: "Home"}
 	action.Pressed(buttons.NewTextButton("TEST"))
 
 	go webserver()
