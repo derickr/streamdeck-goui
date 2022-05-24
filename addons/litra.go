@@ -53,7 +53,7 @@ func (l *Litra) Update() {
 
 	buttonAction := &LitraAction{Litra: l}
 	imgFile := viper.GetString("buttons.images") +
-		"/litera-config-" +
+		"/litra-config-" +
 		fmt.Sprintf("%d", l.CurrentConfig) +
 		".png"
 

@@ -21,6 +21,15 @@ Home:
       - ImageNormal: "bright-050.png"
       - LevelHigh: 90
       - ImageHigh: "bright-100.png"
+  - Index: 11
+    Type: litra
+    Arguments:
+      - 0: "4000,25"
+      - 1: "4000,50"
+      - 2: "4000,80"
+      - 3: "6500,80"
+      - 4: "6500,50"
+      - 5: "6500,25"
   - Index: 12
     Type: clock
   - Index: 13
