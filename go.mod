@@ -5,6 +5,7 @@ go 1.14
 replace github.com/magicmonkey/go-streamdeck => /home/derick/dev/go/src/github.com/magicmonkey/go-streamdeck
 
 require (
+	github.com/andreykaipov/goobs v0.12.1 // indirect
 	github.com/christopher-dG/go-obs-websocket v0.0.0-20200501221211-5c9c018f6fb4
 	github.com/crazy3lf/colorconv v1.2.0 // indirect
 	github.com/derickr/go-litra-driver v0.0.0-20220523150609-fcd7457fd7ea // indirect

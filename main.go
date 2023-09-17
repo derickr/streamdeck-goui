@@ -29,8 +29,7 @@ func loadConfigAndDefaults() {
 	// first set some default values
 	viper.AddConfigPath(".")
 	viper.SetDefault("buttons.images", "images/buttons") // location of button images
-	viper.SetDefault("obs.host", "localhost")            // OBS webhooks endpoint
-	viper.SetDefault("obs.port", 4444)                   // OBS webhooks endpoint
+	viper.SetDefault("obs.host", "localhost:4455")       // OBS webhooks endpoint
 	viper.SetDefault("mqtt.uri", "tcp://10.1.0.1:1883")  // MQTT server location
 
 	// now read in config for any overrides

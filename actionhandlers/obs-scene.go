@@ -1,13 +1,14 @@
 package actionhandlers
 
 import (
-	"github.com/christopher-dG/go-obs-websocket"
+	"github.com/andreykaipov/goobs"
+	"github.com/andreykaipov/goobs/api/requests/scenes"
 	streamdeck "github.com/magicmonkey/go-streamdeck"
 	"github.com/rs/zerolog/log"
 )
 
 type OBSSceneAction struct {
-	Client obsws.Client
+	Client *goobs.Client
 	Scene  string
 	btn    streamdeck.Button
 }
@@ -15,8 +16,7 @@ type OBSSceneAction struct {
 func (action *OBSSceneAction) Pressed(btn streamdeck.Button) {
 
 	log.Info().Msg("Set scene: " + action.Scene)
-	req := obsws.NewSetCurrentSceneRequest(action.Scene)
-	_, err := req.SendReceive(action.Client)
+	_, err := action.Client.Scenes.SetCurrentProgramScene(&scenes.SetCurrentProgramSceneParams{SceneName: action.Scene})
 	if err != nil {
 		log.Warn().Err(err).Msg("OBS scene action error")
 	}

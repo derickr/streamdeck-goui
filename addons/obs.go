@@ -4,7 +4,10 @@ import (
 	"image/color"
 	"strings"
 
-	obsws "github.com/christopher-dG/go-obs-websocket"
+	"github.com/andreykaipov/goobs"
+	"github.com/andreykaipov/goobs/api/events"
+	"github.com/andreykaipov/goobs/api/requests/inputs"
+	"github.com/andreykaipov/goobs/api/requests/scenes"
 	"github.com/derickr/streamdeck-goui/actionhandlers"
 	"github.com/magicmonkey/go-streamdeck"
 	"github.com/magicmonkey/go-streamdeck/buttons"
@@ -15,7 +18,7 @@ import (
 
 type Obs struct {
 	SD                *streamdeck.StreamDeck
-	obs_client        obsws.Client
+	obs_client        *goobs.Client
 	recordButtonIndex int
 	streamButtonIndex int
 	toggleMuteIndex   int
@@ -45,12 +48,7 @@ func (o *Obs) ClearButtons() {
 }
 
 func (o *Obs) SetRecordButton(index int, image string, unmuteSource string) {
-	if o.obs_client.Connected() == false {
-		o.ConnectOBS()
-		o.ObsEventHandlers()
-	}
-
-	if o.obs_client.Connected() == false {
+	if o.obs_client == nil {
 		return
 	}
 
@@ -70,12 +68,7 @@ func (o *Obs) SetRecordButton(index int, image string, unmuteSource string) {
 }
 
 func (o *Obs) SetStreamButton(index int, image string, unmuteSource string) {
-	if o.obs_client.Connected() == false {
-		o.ConnectOBS()
-		o.ObsEventHandlers()
-	}
-
-	if o.obs_client.Connected() == false {
+	if o.obs_client == nil {
 		return
 	}
 
@@ -96,23 +89,17 @@ func (o *Obs) SetStreamButton(index int, image string, unmuteSource string) {
 
 func (o *Obs) getMuteCurrentStatus(source string) bool {
 	log.Info().Msg("Fetching current mute status")
-	req := obsws.NewGetMuteRequest(source)
+	result, err := o.obs_client.Inputs.GetInputMute(&inputs.GetInputMuteParams{InputName: source})
 
-	result, err := req.SendReceive(o.obs_client)
 	if err != nil {
 		log.Warn().Err(err).Msg("OBS stream action error")
 	}
 
-	return result.Muted
+	return result.InputMuted
 }
 
 func (o *Obs) SetToggleMuteButton(index int, source string, imageOn string, imageOff string) {
-	if o.obs_client.Connected() == false {
-		o.ConnectOBS()
-		o.ObsEventHandlers()
-	}
-
-	if o.obs_client.Connected() == false {
+	if o.obs_client == nil {
 		return
 	}
 
@@ -139,12 +126,11 @@ func (o *Obs) SetToggleMuteButton(index int, source string, imageOn string, imag
 func (o *Obs) ConnectOBS() {
 	log.Debug().Msg("Connecting to OBS...")
 	log.Info().Msgf("%#v\n", viper.Get("obs.host"))
-	o.obs_client = obsws.Client{
-		Host:     viper.GetString("obs.host"),
-		Port:     viper.GetInt("obs.port"),
-		Password: viper.GetString("obs.password"),
-	}
-	err := o.obs_client.Connect()
+	tmpObsClient, err := goobs.New(
+		viper.GetString("obs.host"),
+		goobs.WithPassword(viper.GetString("obs.password")),
+	)
+	o.obs_client = tmpObsClient
 	if err != nil {
 		log.Warn().Err(err).Msg("Cannot connect to OBS")
 	}
@@ -152,66 +138,64 @@ func (o *Obs) ConnectOBS() {
 }
 
 func (o *Obs) ObsEventHandlers() {
-	if o.obs_client.Connected() == false {
+	if o.obs_client == nil {
 		return
 	}
 
 	log.Debug().Msg("Setting up handlers...")
 
-	o.obs_client.AddEventHandler("SwitchScenes", func(e obsws.Event) {
-		// Make sure to assert the actual event type.
-		scene := strings.ToLower(e.(obsws.SwitchScenesEvent).SceneName)
-		log.Info().Msg("Old scene: " + obs_current_scene)
-		// undecorate the old
-		if oldb, ok := buttons_obs[obs_current_scene]; ok {
-			log.Info().Int("button", oldb.ButtonId).Msg("Clear original button decoration")
-			o.SD.UnsetDecorator(oldb.ButtonId)
-		}
-		// decorate the new
-		log.Info().Msg("New scene: " + scene)
-		if eventb, ok := buttons_obs[scene]; ok {
-			log.Info().Int("button", eventb.ButtonId).Msg("Highlight new scene button")
-			decorator2 := sddecorators.NewBorder(4, color.RGBA{255, 255, 0, 255})
-			o.SD.SetDecorator(eventb.ButtonId, decorator2)
-		}
-		obs_current_scene = scene
-	})
+	go o.obs_client.Listen(func(event interface{}) {
+		switch e := event.(type) {
+		case *events.CurrentProgramSceneChanged:
+			// Make sure to assert the actual event type.
+			scene := e.SceneName
+			lScene := strings.ToLower(scene)
 
-	o.obs_client.AddEventHandler("RecordingStarted", func(e obsws.Event) {
-		if o.recordButtonIndex >= 0 {
-			decorator2 := sddecorators.NewBorder(8, color.RGBA{255, 0, 0, 255})
-			log.Info().Msg("Recording Started")
-			o.SD.SetDecorator(o.recordButtonIndex, decorator2)
-		}
-	})
+			log.Info().Msg("Old scene: " + obs_current_scene)
+			// undecorate the old
+			if oldb, ok := buttons_obs[obs_current_scene]; ok {
+				log.Info().Int("button", oldb.ButtonId).Msg("Clear original button decoration")
+				o.SD.UnsetDecorator(oldb.ButtonId)
+			}
+			// decorate the new
+			log.Info().Msg("New scene: " + scene)
+			if eventb, ok := buttons_obs[lScene]; ok {
+				log.Info().Int("button", eventb.ButtonId).Msg("Highlight new scene button")
+				decorator2 := sddecorators.NewBorder(4, color.RGBA{255, 255, 0, 255})
+				o.SD.SetDecorator(eventb.ButtonId, decorator2)
+			}
+			obs_current_scene = lScene
 
-	o.obs_client.AddEventHandler("RecordingStopped", func(e obsws.Event) {
-		if o.recordButtonIndex >= 0 {
-			log.Info().Msg("Recording Stopped")
-			o.SD.UnsetDecorator(o.recordButtonIndex)
-		}
-	})
+		case *events.RecordStateChanged:
+			if o.recordButtonIndex >= 0 {
+				if e.OutputActive {
+					decorator2 := sddecorators.NewBorder(8, color.RGBA{255, 0, 0, 255})
+					log.Info().Msg("Recording Started")
+					o.SD.SetDecorator(o.recordButtonIndex, decorator2)
+				} else {
+					log.Info().Msg("Recording Stopped")
+					o.SD.UnsetDecorator(o.recordButtonIndex)
+				}
+			}
 
-	o.obs_client.AddEventHandler("StreamStarted", func(e obsws.Event) {
-		if o.streamButtonIndex >= 0 {
-			decorator2 := sddecorators.NewBorder(8, color.RGBA{0, 0, 255, 255})
-			log.Info().Msg("Stream Started")
-			o.SD.SetDecorator(o.streamButtonIndex, decorator2)
-		}
-	})
-	o.obs_client.AddEventHandler("StreamStopped", func(e obsws.Event) {
-		if o.streamButtonIndex >= 0 {
-			log.Info().Msg("Stream Stopped")
-			o.SD.UnsetDecorator(o.streamButtonIndex)
-		}
-	})
+		case *events.StreamStateChanged:
+			if o.streamButtonIndex >= 0 {
+				if e.OutputActive {
+					decorator2 := sddecorators.NewBorder(8, color.RGBA{0, 0, 255, 255})
+					log.Info().Msg("Stream Started")
+					o.SD.SetDecorator(o.streamButtonIndex, decorator2)
+				} else {
+					log.Info().Msg("Stream Stopped")
+					o.SD.UnsetDecorator(o.streamButtonIndex)
+				}
+			}
 
-	o.obs_client.AddEventHandler("SourceMuteStateChanged", func(e obsws.Event) {
-		if o.toggleMuteIndex < 0 {
-			return
+		case *events.InputMuteStateChanged:
+			if o.toggleMuteIndex < 0 {
+				return
+			}
+			o.updateMuteButton(e.InputMuted)
 		}
-
-		o.updateMuteButton(e.(obsws.SourceMuteStateChangedEvent).Muted)
 	})
 }
 
@@ -250,14 +234,13 @@ func (o *Obs) updateMuteButton(muted bool) {
 }
 
 func (o *Obs) Buttons(maxScenes int, offset int) {
-	if o.obs_client.Connected() == false {
-		o.ConnectOBS()
-		o.ObsEventHandlers()
-	}
+	o.ConnectOBS()
 
-	if o.obs_client.Connected() == false {
+	if o.obs_client == nil {
 		return
 	}
+
+	o.ObsEventHandlers()
 
 	// OBS Scenes to Buttons
 	buttons_obs = make(map[string]*ObsScene)
@@ -268,33 +251,37 @@ func (o *Obs) Buttons(maxScenes int, offset int) {
 	var image string
 
 	// what scenes do we have? (max 8 for the top row of buttons)
-	scene_req := obsws.NewGetSceneListRequest()
-	scenes, err := scene_req.SendReceive(o.obs_client)
+	scenes, err := o.obs_client.Scenes.GetSceneList(&scenes.GetSceneListParams{})
 	if err != nil {
 		log.Warn().Err(err)
 	}
-	obs_current_scene = strings.ToLower(scenes.CurrentScene)
+
+	// what is the current schene?
+	obs_current_scene = strings.ToLower(scenes.CurrentProgramSceneName)
 
 	// make buttons for these scenes
 	log.Debug().Msgf("Max Scenes: %d", maxScenes)
-	for i, scene := range scenes.Scenes {
+	for j := len(scenes.Scenes) - 1; j >= 0; j-- {
+		scene := scenes.Scenes[j]
+		i := len(scenes.Scenes) - 1 - j
+		log.Debug().Msg("Scene: " + scene.SceneName)
+		image = ""
+		sceneName := scene.SceneName
+		lSceneName := strings.ToLower(sceneName)
 		// only need a few scenes
 		if i >= maxScenes {
-			break
+			continue
 		}
 
-		log.Debug().Msg("Scene: " + scene.Name)
-		image = ""
-		oaction := &actionhandlers.OBSSceneAction{Scene: scene.Name, Client: o.obs_client}
-		sceneName := strings.ToLower(scene.Name)
+		oaction := &actionhandlers.OBSSceneAction{Scene: scene.SceneName, Client: o.obs_client}
 
-		if s, ok := buttons_obs[sceneName]; ok {
+		if s, ok := buttons_obs[lSceneName]; ok {
 			if s.Image != "" {
 				image = image_path + "/" + s.Image
 			}
 		} else {
 			// there wasn't an entry in the buttons for this scene so add one
-			buttons_obs[sceneName] = &ObsScene{}
+			buttons_obs[lSceneName] = &ObsScene{}
 		}
 
 		if image != "" {
@@ -305,7 +292,7 @@ func (o *Obs) Buttons(maxScenes int, offset int) {
 				obutton.SetActionHandler(oaction)
 				o.SD.AddButton(i+offset, obutton)
 				// store which button we just set
-				buttons_obs[sceneName].SetButtonId(i + offset)
+				buttons_obs[lSceneName].SetButtonId(i + offset)
 			} else {
 				// something went wrong with the image, use a default one
 				image = image_path + "/play.jpg"
@@ -314,16 +301,16 @@ func (o *Obs) Buttons(maxScenes int, offset int) {
 					obutton.SetActionHandler(oaction)
 					o.SD.AddButton(i+offset, obutton)
 					// store which button we just set
-					buttons_obs[sceneName].SetButtonId(i + offset)
+					buttons_obs[lSceneName].SetButtonId(i + offset)
 				}
 			}
 		} else {
 			// use a text button
-			oopbutton := buttons.NewTextButton(scene.Name)
+			oopbutton := buttons.NewTextButton(scene.SceneName)
 			oopbutton.SetActionHandler(oaction)
 			o.SD.AddButton(i+offset, oopbutton)
 			// store which button we just set
-			buttons_obs[sceneName].SetButtonId(i + offset)
+			buttons_obs[lSceneName].SetButtonId(i + offset)
 		}
 	}
 
