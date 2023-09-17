@@ -71,7 +71,7 @@ func (l *Litra) Update() {
 }
 
 func (l *Litra) Init() {
-	l.CurrentConfig = 1
+	l.CurrentConfig = 0
 	l.buttonIndex = -1
 
 	dev, _ := litra.New()
