@@ -28,7 +28,7 @@ func (t *TimerAction) Pressed(btn streamdeck.Button) {
 		duration := time.Now().Sub(t.Clock.StartTimes[index])
 		out := time.Time{}.Add(duration)
 
-		log.Info().Msgf("Elapsed time for %s: %s", t.Clock.InactiveImages[index], out.Format("15:04:05"))
+		log.Info().Msgf("Elapsed time for %s: %s", t.Clock.ClockNames[index], out.Format("15:04:05"))
 		t.Clock.TimersActive[t.ButtonIndex] = false
 		return
 	}
@@ -38,14 +38,14 @@ func (t *TimerAction) Pressed(btn streamdeck.Button) {
 }
 
 type Clock struct {
-	SD             *streamdeck.StreamDeck
-	ClockButtons   [32]bool
-	Hues           [32]int
-	InactiveImages [32]string
-	dones          [32]chan bool
-	Tickers        [32]*time.Ticker
-	TimersActive   [32]bool
-	StartTimes     [32]time.Time
+	SD           *streamdeck.StreamDeck
+	ClockButtons [32]bool
+	Hues         [32]int
+	ClockNames   [32]string
+	dones        [32]chan bool
+	Tickers      [32]*time.Ticker
+	TimersActive [32]bool
+	StartTimes   [32]time.Time
 }
 
 func (c *Clock) Init() {
@@ -76,9 +76,9 @@ func (c *Clock) Init() {
 							} else {
 								button = buttons.NewTextButtonWithColours(fmt.Sprintf("%s", out.Format("4:05")), color.White, color.RGBA{r, g, b, 255})
 							}
-						} else if c.InactiveImages[index] != "" {
+						} else if c.ClockNames[index] != "" {
 							r, g, b, _ := colorconv.HSLToRGB(float64(c.Hues[index]), 0.5, 0.5)
-							button = buttons.NewTextButtonWithColours(c.InactiveImages[index], color.White, color.RGBA{r, g, b, 255})
+							button = buttons.NewTextButtonWithColours(c.ClockNames[index], color.White, color.RGBA{r, g, b, 255})
 						} else {
 							button = buttons.NewTextButton(fmt.Sprintf("%02d:%02d:%02d", t.Hour(), t.Minute(), t.Second()))
 						}
@@ -94,13 +94,13 @@ func (c *Clock) Init() {
 func (c *Clock) AddClockButton(offset int, hue string, inactiveImage string) {
 	c.ClockButtons[offset] = true
 	c.Hues[offset], _ = strconv.Atoi(hue)
-	c.InactiveImages[offset] = inactiveImage
+	c.ClockNames[offset] = inactiveImage
 }
 
 func (c *Clock) Reset() {
 	for i := 0; i < 32; i++ {
 		c.ClockButtons[i] = false
 		c.Hues[i] = 0
-		c.InactiveImages[i] = ""
+		c.ClockNames[i] = ""
 	}
 }
