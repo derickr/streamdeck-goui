@@ -74,7 +74,7 @@ func (c *Clock) Init() {
 							if st > 1*time.Hour {
 								button = buttons.NewTextButtonWithColours(fmt.Sprintf("%s", out.Format("15h04")), color.White, color.RGBA{r, g, b, 255})
 							} else {
-								button = buttons.NewTextButtonWithColours(fmt.Sprintf("%s", out.Format("4:05")), color.White, color.RGBA{r, g, b, 255})
+								button = buttons.NewTextButtonWithColours(fmt.Sprintf("%s", out.Format("04:05")), color.White, color.RGBA{r, g, b, 255})
 							}
 						} else if c.ClockNames[index] != "" {
 							r, g, b, _ := colorconv.HSLToRGB(float64(c.Hues[index]), 0.5, 0.5)
