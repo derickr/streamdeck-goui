@@ -28,7 +28,12 @@ func (t *TimerAction) Pressed(btn streamdeck.Button) {
 		duration := time.Now().Sub(t.Clock.StartTimes[index])
 		out := time.Time{}.Add(duration)
 
-		log.Info().Msgf("Elapsed time for %s: %s", t.Clock.ClockNames[index], out.Format("15:04:05"))
+		log.Info().Msgf("Elapsed time for %s: %s (%s to %s)",
+			t.Clock.ClockNames[index],
+			out.Format("15:04:05"),
+			t.Clock.StartTimes[index].Format("2006-01-02 15:04:05"),
+			time.Now().Format("2006-01-02 15:04:05"))
+
 		t.Clock.TimersActive[t.ButtonIndex] = false
 		return
 	}
