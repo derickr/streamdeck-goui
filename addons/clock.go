@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"image/color"
 	"math"
+	"os/exec"
 	"strconv"
+	"strings"
 	"time"
 
 	//"github.com/derickr/streamdeck-goui/actionhandlers"
@@ -21,6 +23,13 @@ type TimerAction struct {
 	ButtonIndex int
 }
 
+func ReadComment() string {
+	c, b := exec.Command("zenity", "--title=Enter Task Comment", "--entry", "--text=Comment:"), new(strings.Builder)
+	c.Stdout = b
+	c.Run()
+	return b.String()
+}
+
 func (t *TimerAction) Pressed(btn streamdeck.Button) {
 	index := btn.GetButtonIndex()
 
@@ -28,11 +37,16 @@ func (t *TimerAction) Pressed(btn streamdeck.Button) {
 		duration := time.Now().Sub(t.Clock.StartTimes[index])
 		out := time.Time{}.Add(duration)
 
-		log.Info().Msgf("Elapsed time for %s: %s (%s to %s)",
-			t.Clock.ClockNames[index],
-			out.Format("15:04:05"),
-			t.Clock.StartTimes[index].Format("2006-01-02 15:04:05"),
-			time.Now().Format("2006-01-02 15:04:05"))
+		comment := ReadComment()
+
+		log.Info().
+			Str("project", t.Clock.ClockNames[index]).
+			Str("start", t.Clock.StartTimes[index].Format("2006-01-02 15:04:05")).
+			Str("end", time.Now().Format("2006-01-02 15:04:05")).
+			Str("textual_length", out.Format("15:04:05")).
+			Float64("length", duration.Hours()).
+			Str("comment", comment).
+			Send()
 
 		t.Clock.TimersActive[t.ButtonIndex] = false
 		return
