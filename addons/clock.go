@@ -77,15 +77,15 @@ func (c *Clock) Init() {
 							r, g, b, _ := colorconv.HSLToRGB(float64(c.Hues[index]), math.Min(0.25+float64(out.Minute()/30.0), 0.75), 0.5)
 
 							if st > 1*time.Hour {
-								button = buttons.NewTextButtonWithColours(fmt.Sprintf("%s", out.Format("15h04")), color.White, color.RGBA{r, g, b, 255})
+								button = buttons.NewTextButtonWithColoursAndMargin(fmt.Sprintf("%s", out.Format("15h04")), color.White, color.RGBA{r, g, b, 255}, 0)
 							} else {
-								button = buttons.NewTextButtonWithColours(fmt.Sprintf("%s", out.Format("04:05")), color.White, color.RGBA{r, g, b, 255})
+								button = buttons.NewTextButtonWithColoursAndMargin(fmt.Sprintf("%s", out.Format("04:05")), color.White, color.RGBA{r, g, b, 255}, 0)
 							}
 						} else if c.ClockNames[index] != "" {
 							r, g, b, _ := colorconv.HSLToRGB(float64(c.Hues[index]), 0.5, 0.5)
-							button = buttons.NewTextButtonWithColours(c.ClockNames[index], color.White, color.RGBA{r, g, b, 255})
+							button = buttons.NewTextButtonWithColoursAndMargin(c.ClockNames[index], color.White, color.RGBA{r, g, b, 255}, 0)
 						} else {
-							button = buttons.NewTextButton(fmt.Sprintf("%02d:%02d:%02d", t.Hour(), t.Minute(), t.Second()))
+							button = buttons.NewTextButtonWithMargin(fmt.Sprintf("%02d:%02d:%02d", t.Hour(), t.Minute(), t.Second()), 0)
 						}
 						button.SetActionHandler(&TimerAction{StartTime: t, Clock: c, ButtonIndex: index})
 						c.SD.AddButton(index, button)

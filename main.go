@@ -1,6 +1,7 @@
 package main
 
 import (
+	"image/color"
 	"fmt"
 	"net/http"
 	"os"
@@ -160,7 +161,7 @@ func setupPages(sd *streamdeck.StreamDeck) {
 			button.SetActionHandler(&PageAction{Page: page.Name})
 			sd.AddButton(index, button)
 		} else {
-			button := buttons.NewTextButton(page.Name)
+			button := buttons.NewTextButtonWithColoursAndMargin(page.Name, color.White, color.Black, 0)
 			button.SetActionHandler(&PageAction{Page: page.Name})
 			sd.AddButton(index, button)
 		}

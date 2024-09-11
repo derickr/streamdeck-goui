@@ -169,7 +169,7 @@ func (o *Obs) ObsEventHandlers() {
 		case *events.RecordStateChanged:
 			if o.recordButtonIndex >= 0 {
 				if e.OutputActive {
-					decorator2 := sddecorators.NewBorder(8, color.RGBA{255, 0, 0, 255})
+					decorator2 := sddecorators.NewBorder(4, color.RGBA{255, 0, 0, 255})
 					log.Info().Msg("Recording Started")
 					o.SD.SetDecorator(o.recordButtonIndex, decorator2)
 				} else {
@@ -181,7 +181,7 @@ func (o *Obs) ObsEventHandlers() {
 		case *events.StreamStateChanged:
 			if o.streamButtonIndex >= 0 {
 				if e.OutputActive {
-					decorator2 := sddecorators.NewBorder(8, color.RGBA{0, 0, 255, 255})
+					decorator2 := sddecorators.NewBorder(4, color.RGBA{0, 0, 255, 255})
 					log.Info().Msg("Stream Started")
 					o.SD.SetDecorator(o.streamButtonIndex, decorator2)
 				} else {
@@ -306,7 +306,7 @@ func (o *Obs) Buttons(maxScenes int, offset int) {
 			}
 		} else {
 			// use a text button
-			oopbutton := buttons.NewTextButton(scene.SceneName)
+			oopbutton := buttons.NewTextButtonWithMargin(scene.SceneName, 6)
 			oopbutton.SetActionHandler(oaction)
 			o.SD.AddButton(i+offset, oopbutton)
 			// store which button we just set
