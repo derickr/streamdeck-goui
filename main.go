@@ -25,7 +25,11 @@ var litra_addon *addons.Litra
 var clock_addon *addons.Clock
 
 func loadConfigAndDefaults() {
-	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "15:04"})
+	consoleWriter := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: "15:04"}
+	multi := zerolog.MultiLevelWriter(consoleWriter, os.Stderr)
+	logger := zerolog.New(multi).With().Timestamp().Logger()
+
+	log.Logger = logger
 
 	// first set some default values
 	viper.AddConfigPath(".")
