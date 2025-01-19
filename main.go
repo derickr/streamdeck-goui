@@ -141,7 +141,11 @@ func (action *PageAction) Pressed(btn streamdeck.Button) {
 		}
 
 		if button.Type == "clock" {
-			clock_addon.AddClockButton(button.Index, button.Arguments["Hue"], button.Arguments["ClockName"])
+			speed, _ := strconv.ParseFloat(button.Arguments["ClockSpeed"], 64)
+			if speed == 0 {
+				speed = 1
+			}
+			clock_addon.AddClockButton(button.Index, button.Arguments["Hue"], button.Arguments["ClockName"], speed)
 		}
 	}
 }

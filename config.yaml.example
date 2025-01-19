@@ -32,6 +32,10 @@ Home:
       - 5: "6500,25"
   - Index: 12
     Type: clock
+    Arguments:
+      - Hue: 90
+      - ClockName: "ClockText"
+      - ClockSpeed: 1.5
   - Index: 13
     Type: command
     Image: "lock.png"

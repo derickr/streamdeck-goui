@@ -34,7 +34,10 @@ func (t *TimerAction) Pressed(btn streamdeck.Button) {
 	index := btn.GetButtonIndex()
 
 	if t.Clock.TimersActive[t.ButtonIndex] {
-		duration := time.Now().Sub(t.Clock.StartTimes[index])
+		var comment string
+
+		durationF := float64(time.Now().Sub(t.Clock.StartTimes[index]).Nanoseconds()) * t.Clock.ClockSpeeds[index]
+		duration := time.Duration(durationF)
 		out := time.Time{}.Add(duration)
 
 		if t.Clock.ClockNames[index] != "" {
@@ -65,6 +68,7 @@ type Clock struct {
 	ClockButtons [32]bool
 	Hues         [32]int
 	ClockNames   [32]string
+	ClockSpeeds  [32]float64
 	dones        [32]chan bool
 	Tickers      [32]*time.Ticker
 	TimersActive [32]bool
@@ -114,10 +118,11 @@ func (c *Clock) Init() {
 	}
 }
 
-func (c *Clock) AddClockButton(offset int, hue string, inactiveImage string) {
+func (c *Clock) AddClockButton(offset int, hue string, inactiveImage string, speed float64) {
 	c.ClockButtons[offset] = true
 	c.Hues[offset], _ = strconv.Atoi(hue)
 	c.ClockNames[offset] = inactiveImage
+	c.ClockSpeeds[offset] = speed
 }
 
 func (c *Clock) Reset() {
@@ -125,5 +130,6 @@ func (c *Clock) Reset() {
 		c.ClockButtons[i] = false
 		c.Hues[i] = 0
 		c.ClockNames[i] = ""
+		c.ClockSpeeds[i] = 1
 	}
 }
