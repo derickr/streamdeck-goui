@@ -37,7 +37,11 @@ func (t *TimerAction) Pressed(btn streamdeck.Button) {
 		duration := time.Now().Sub(t.Clock.StartTimes[index])
 		out := time.Time{}.Add(duration)
 
-		comment := ReadComment()
+		if t.Clock.ClockNames[index] != "" {
+			comment = ReadComment()
+		} else {
+			comment = ""
+		}
 
 		log.Info().
 			Str("project", t.Clock.ClockNames[index]).
